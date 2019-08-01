@@ -3,10 +3,13 @@
 
 #define M 100
 
-struct particle {
 
-    int prevParticle;
-    int nextParticle;
+/** Naming
+ * functions: words seperated by "_". Ex get_val(int val);
+ *  variables: words start with upper case letter. Ex newVal = oldVal;
+ */
+
+struct particle {
 
     double x;
     double y;
@@ -40,16 +43,17 @@ struct minmax{
 
 };
 
-struct ddist calculate_ddist(struct particle particles[M],struct anchorMap anchorMap);
-void move_particle(struct particle particles[M], double acceleration, int timestamp);
-void update_map(struct anchorMap anchorMap);
-void normalize_weight(struct particle particles[M]);
-double assign_weight(struct particle particles[M], struct anchorMap anchorMap, char * measurment);
-void low_variance_sampling(struct particle particles[M]);
-void highest_weight(struct particle particles[M]);
-void best_position(struct particle particles[M]);
-void particle_filter(struct particle particles[M], struct anchorMap anchorMap, char * dataPackage);
-void init(struct particle particles[M], struct minmax);
+struct ddist calculate_ddist(struct particle particles[M],struct anchor anchorMap[], int numAnchors);
+int move_particle(struct particle particles[M], double acceleration, int timestamp);
+int update_map(struct anchor anchorMap[]);
+int normalize_weight(struct particle particles[M]);
+double assign_weight(struct particle particles[M], struct anchor anchorMap[], int numAnchors, char measurment[]);
+int low_variance_sampling(struct particle particles[M]);
+int highest_weight(struct particle particles[M]);
+int best_position(struct particle particles[M]);
+int particle_filter(struct particle particles[M], struct anchor anchorMap[], int numAnchors, char dataPackage[]);
+int init(struct particle particles[M], struct minmax minmax);
+double multi_norm_pdf(double *x,double *mu,double *sigma,int numAnchorMeas);
 
 int main();
 
