@@ -1,17 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int read_file(char c[]);
+
+#define ARR_LENGTH 1000
+
+int read_file(char c[],int lineNr);
 
 int main(){
-    char c[1000];
-    read_file(c);
+    char c[ARR_LENGTH];
+    int lineNr = 0;
+    read_file(c, lineNr);
     printf("Data from the file:\n%s", c);
     return 0;
 }
 
 
-int read_file(char c[])
+int read_file(char c[],int lineNr)
 {
     
     FILE *fptr;
