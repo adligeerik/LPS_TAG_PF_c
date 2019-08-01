@@ -1,19 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-char *read_file();
+int read_file(char c[]);
 
 int main(){
-    char *line;
-    line = read_file();
-    printf("Data from the file:\n%s", line);
+    char c[1000];
+    read_file(c);
+    printf("Data from the file:\n%s", c);
     return 0;
 }
 
 
-char *read_file()
+int read_file(char c[])
 {
-    static char c[1000];
+    
     FILE *fptr;
     if ((fptr = fopen("tagdata.json", "r")) == NULL)
     {
@@ -26,5 +26,5 @@ char *read_file()
     printf("Data from the file:\n%s", c);
     fclose(fptr);
     
-    return c;
+    return 0;
 }
