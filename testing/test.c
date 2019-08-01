@@ -1,34 +1,27 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-
-#define ARR_LENGTH 1000
-
-int read_file(char c[],int lineNr);
-
-int main(){
-    char c[ARR_LENGTH];
-    int lineNr = 0;
-    read_file(c, lineNr);
-    printf("Data from the file:\n%s", c);
-    return 0;
-}
-
-
-int read_file(char c[],int lineNr)
-{
-    
-    FILE *fptr;
-    if ((fptr = fopen("tagdata.json", "r")) == NULL)
-    {
-        printf("Error! opening file");
-        // Program exits if file pointer returns NULL.
-        exit(1);         
+int main(void) {
+    FILE *fp = fopen("tagdata.json", "r");
+    if(fp == NULL) {
+        perror("Unable to open file!");
+        exit(1);
     }
-    // reads text until newline 
-    fscanf(fptr,"%[^\n]", c);
-    printf("Data from the file:\n%s", c);
-    fclose(fptr);
-    
-    return 0;
+
+    // Read lines using POSIX function getline
+    // This code won't work on Windows
+    char *line = NULL;
+    size_t len = 0;
+
+    while(getline(&line, &len, fp) != -1) {
+        //printf("line length: %s\n", line);
+        printf("len %zd\n",len);
+    }
+
+    printf("\n\nMax line size: %zd\n", len);
+
+    fclose(fp);
+    free(line);     // getline will resize the input buffer as necessary
+                    // the user needs to free the memory when not needed!
 }
