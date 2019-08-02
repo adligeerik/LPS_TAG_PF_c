@@ -135,9 +135,9 @@ read_map(char fileName[])
         name = malloc(20);
         for (int i = 0; i < length; i++)
         {
-            //printf("%c\n", *(buffer+i));
+            
             if (buffer[i] == (int)'{')
-            { //"{"
+            {
                 openBrackets++;
                 i++;
             }
@@ -152,7 +152,7 @@ read_map(char fileName[])
                 quotMark = quotMark % 2;
                 i++;
             }
-            if (quotMark && openBrackets == 1)
+            if (quotMark)
             {
                 int j = 0;
                 while (quotMark)
@@ -168,13 +168,68 @@ read_map(char fileName[])
                         name[j] = 0;
                     }
                 }
+                if(openBrackets == 1){
+                    strcpy( anchor1.anchorname, name);
+                }
+                char strVal[30];       
+                char xstr[] = "x";
+                char ystr[] = "y";
+                char zstr[] = "z";
+                char refAncstr[] = "ref_anchor";
+                if (!strcmp(name,xstr)){
+                    i++;
+                    i++;
+                    int j = 0;
+                    while(!(buffer[i] == (int)','||buffer[i] == (int)'\n')){
+                        strVal[j] = buffer[i];
+                        i++;
+                        j++;
+                    }
+                    
+                    anchor1.x = atof(strVal);
+                }
+                       
                 
-                strcpy( anchor1.anchorname, name);
-                printf("%s\n",anchor1.anchorname);
+                if (!strcmp(name,ystr)){
+                    i++;
+                    i++;
+                    int j = 0;
+                    while(!(buffer[i] == (int)','||buffer[i] == (int)'\n')){
+                        strVal[j] = buffer[i];
+                        i++;
+                        j++;
+                    }
+                    
+                    anchor1.y = atof(strVal);
+                }
+
+                if (!strcmp(name,zstr)){
+                    i++;
+                    i++;
+                    int j = 0;
+                    while(!(buffer[i] == (int)','||buffer[i] == (int)'\n')){
+                        strVal[j] = buffer[i];
+                        i++;
+                        j++;
+                    }
+                    
+                    anchor1.z = atof(strVal);
+                }
+
+                if (!strcmp(name,refAncstr)){
+                    i++;
+                    i++;
+                    int j = 0;
+                    while(!(buffer[i] == (int)','||buffer[i] == (int)'\n')){
+                        strVal[j] = buffer[i];
+                        i++;
+                        j++;
+                    }
+                    
+                    anchor1.ref_anchor = atof(strVal);
+                }
             }
         }
-        printf("%s\n", buffer);
-        // start to process your data / extract strings here...
     }
     return anchor1;
 }
