@@ -54,6 +54,7 @@ int best_position(struct particle particles[M]);
 int particle_filter(struct particle particles[M], struct anchor anchorMap[], int numAnchors, char dataPackage[]);
 int init(struct particle particles[M], struct minmax minmax);
 double multi_norm_pdf(double *x,double *mu,double *sigma,int numAnchorMeas);
+struct anchor * read_map(char fileName[]);
 
 int main();
 

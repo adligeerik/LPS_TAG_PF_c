@@ -102,12 +102,15 @@ get_min_max(struct anchor anchorMap[])
 }
 
 /**
- * Reads a file that contains the map of the system and returns it as a anchor struct
+ * Reads a file that contains the map of the system and returns it as a anchor struct array
  */
-struct anchor
+struct anchor *
 read_map(char fileName[])
 {
+    // Array with all anchors (TODO dynamic lenght of array)
+    static struct anchor anchorMap[4];
 
+    // Read file and puts the data in buffer
     char *buffer = 0;
     long length;
     FILE *f = fopen(fileName, "rb");
@@ -125,33 +128,39 @@ read_map(char fileName[])
         fclose(f);
     }
 
-    //printf("%ld\n", length);
-    struct anchor anchor1;
+    
+    //printf("%s\n",buffer);
+
+    // Parse the json string
     if (buffer)
-    {    
+    {   
+        int anchorNum = -1;
         int openBrackets = 0;
         int quotMark = 0;
         char *name;
         name = malloc(20);
         for (int i = 0; i < length; i++)
-        {
-            
+        {   
+            // New object starts
             if (buffer[i] == (int)'{')
             {
                 openBrackets++;
                 i++;
             }
+            // End of object
             if (buffer[i] == (int)'}')
             {
                 openBrackets--;
                 i++;
             }
+            // Key in object starts/stop
             if (buffer[i] == (int)'"')
             {
                 quotMark++;
                 quotMark = quotMark % 2;
                 i++;
             }
+            // When a new key
             if (quotMark)
             {
                 int j = 0;
@@ -168,14 +177,18 @@ read_map(char fileName[])
                         name[j] = 0;
                     }
                 }
+                // New anchor
                 if(openBrackets == 1){
-                    strcpy( anchor1.anchorname, name);
+                    anchorNum++;
+                    strcpy( anchorMap[anchorNum].anchorname, name);
                 }
+                // Parse content of anchor, coordinates and if ref anchor
                 char strVal[30];       
                 char xstr[] = "x";
                 char ystr[] = "y";
                 char zstr[] = "z";
                 char refAncstr[] = "ref_anchor";
+                // x coordinate
                 if (!strcmp(name,xstr)){
                     i++;
                     i++;
@@ -185,11 +198,9 @@ read_map(char fileName[])
                         i++;
                         j++;
                     }
-                    
-                    anchor1.x = atof(strVal);
+                    anchorMap[anchorNum].x = atof(strVal);
                 }
-                       
-                
+                // y coordinate
                 if (!strcmp(name,ystr)){
                     i++;
                     i++;
@@ -198,11 +209,10 @@ read_map(char fileName[])
                         strVal[j] = buffer[i];
                         i++;
                         j++;
-                    }
-                    
-                    anchor1.y = atof(strVal);
+                    }   
+                    anchorMap[anchorNum].y = atof(strVal);
                 }
-
+                // z coordinate
                 if (!strcmp(name,zstr)){
                     i++;
                     i++;
@@ -211,11 +221,10 @@ read_map(char fileName[])
                         strVal[j] = buffer[i];
                         i++;
                         j++;
-                    }
-                    
-                    anchor1.z = atof(strVal);
+                    }   
+                    anchorMap[anchorNum].z = atof(strVal);
                 }
-
+                // ref anchor val
                 if (!strcmp(name,refAncstr)){
                     i++;
                     i++;
@@ -225,19 +234,27 @@ read_map(char fileName[])
                         i++;
                         j++;
                     }
-                    
-                    anchor1.ref_anchor = atof(strVal);
+                    anchorMap[anchorNum].ref_anchor = (int)strVal[1]-48;
                 }
             }
         }
     }
-    return anchor1;
+    return anchorMap;
 }
 
 int main(void)
 {
 
-    read_map("coordinates.json");
+    struct anchor *anchorMap = read_map("coordinates.json");
+
+    //for (int i = 0;i<4;i++){
+    //    printf("Anchor name: :%s\n",anchorMap[i].anchorname);
+    //    printf("x pos: %.10lf\n",anchorMap[i].x);
+    //    printf("y Pos: %.10lf\n",anchorMap[i].y);
+    //    printf("z pos: %.10lf\n",anchorMap[i].z);
+    //    printf("Ref acnhor: %d\n",anchorMap[i].ref_anchor);
+    //}
+    
 
     FILE *fp = fopen("tagdata.json", "r");
     if (fp == NULL)
