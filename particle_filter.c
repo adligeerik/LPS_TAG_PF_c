@@ -97,8 +97,41 @@ int particle_filter(struct particle particles[M], struct anchor anchorMap[], int
  * Determine the max and min coordinate of the anchorMap and returns it as a minmax struct
  */
 struct minmax
-get_min_max(struct anchor anchorMap[])
+get_min_max(struct anchor anchorMap[], int numAnchors)
 {
+    struct minmax minmax;
+    minmax.xmin = anchorMap[0].x;
+    minmax.xmax = anchorMap[0].x;
+
+    minmax.ymin = anchorMap[0].y;
+    minmax.ymax = anchorMap[0].y;
+
+    minmax.zmin = anchorMap[0].z;
+    minmax.zmax = anchorMap[0].z;
+    
+    for (int i = 1; i < numAnchors; i++){
+        if (minmax.xmax < anchorMap[0].x){
+            minmax.xmax = anchorMap[0].x;
+        }else
+        {
+            minmax.xmin = anchorMap[0].x;
+        }
+
+        if (minmax.ymax < anchorMap[0].y){
+            minmax.ymax = anchorMap[0].y;
+        }else
+        {
+            minmax.ymin = anchorMap[0].y;
+        }
+
+        if (minmax.zmax < anchorMap[0].z){
+            minmax.zmax = anchorMap[0].z;
+        }else
+        {
+            minmax.zmin = anchorMap[0].z;
+        }
+    }
+    return minmax;
 }
 
 /**
@@ -255,6 +288,16 @@ int main(void)
     //    printf("Ref acnhor: %d\n",anchorMap[i].ref_anchor);
     //}
     
+    int numAnchors = 4;
+    struct minmax minmax = get_min_max(anchorMap, numAnchors);
+
+    //printf("x max: %lf\n",minmax.xmax);
+    //printf("y max: %lf\n",minmax.ymax);
+    //printf("z max: %lf\n",minmax.zmax);
+    //printf("x min: %lf\n",minmax.xmax);
+    //printf("y min: %lf\n",minmax.ymax);
+    //printf("z min: %lf\n",minmax.zmax);
+
 
     FILE *fp = fopen("tagdata.json", "r");
     if (fp == NULL)
