@@ -1,5 +1,5 @@
-#ifndef PF_HEADER_FILE
-#define PF_HEADER_FILE
+#ifndef PARTICLE_FILTER_H
+#define PARTICLE_FILTER_H
 
 #define M 100
 

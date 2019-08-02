@@ -4,32 +4,26 @@
 
 #include "particle_filter.h"
 
-
 /**
  * Calculates the ddist for all particles
  */
 struct ddist
-calculate_ddist(struct particle particles[M],struct anchor anchorMap[], int numAnchors)
+calculate_ddist(struct particle particles[M], struct anchor anchorMap[], int numAnchors)
 {
-
 }
-
 
 /**
  * Move particles
  */
-int
-move_particle(struct particle particles[M], double acceleration, int timestamp)
+int move_particle(struct particle particles[M], double acceleration, int timestamp)
 {
     return 0;
 }
 
-
 /**
  * Update the anchor map when needed
  */
-int
-update_map(struct anchor anchorMap[])
+int update_map(struct anchor anchorMap[])
 {
     return 0;
 }
@@ -37,8 +31,7 @@ update_map(struct anchor anchorMap[])
 /**
  * Normalize weigth for each particle
  */
-int
-normalize_weight(struct particle particles[M])
+int normalize_weight(struct particle particles[M])
 {
     return 0;
 }
@@ -49,14 +42,12 @@ normalize_weight(struct particle particles[M])
 double
 assign_weight(struct particle particles[M], struct anchor anchorMap[], int numAnchors, char measurment[])
 {
-
 }
 
 /**
  * Resampling the particles by the low variance sampling algorithm
  */
-int
-low_variance_sampling(struct particle particles[M])
+int low_variance_sampling(struct particle particles[M])
 {
     return 0;
 }
@@ -64,8 +55,7 @@ low_variance_sampling(struct particle particles[M])
 /**
  * Chooses the particle with the highest assign_weight
  */
-int
-highest_weight(struct particle particles[M])
+int highest_weight(struct particle particles[M])
 {
     return 0;
 }
@@ -73,8 +63,7 @@ highest_weight(struct particle particles[M])
 /**
  * Calculates the most likely position of the tag given all the particles
  */
-int
-best_position(struct particle particles[M])
+int best_position(struct particle particles[M])
 {
     return 0;
 }
@@ -82,8 +71,7 @@ best_position(struct particle particles[M])
 /**
  * Initialise particle positions
  */
-int
-init(struct particle particles[M], struct minmax minmax)
+int init(struct particle particles[M], struct minmax minmax)
 {
     return 0;
 }
@@ -92,16 +80,14 @@ init(struct particle particles[M], struct minmax minmax)
  * Calculates the likeliness of the particles ddist given the measurment value
  */
 double
-multi_norm_pdf(double *x,double *mu,double *sigma,int numAnchorMeas)
+multi_norm_pdf(double *x, double *mu, double *sigma, int numAnchorMeas)
 {
-
 }
 
 /**
  * Particle particle_filter
  */
-int
-particle_filter(struct particle particles[M], struct anchor anchorMap[], int numAnchors, char dataPackage[])
+int particle_filter(struct particle particles[M], struct anchor anchorMap[], int numAnchors, char dataPackage[])
 {
 
     return 0;
@@ -113,24 +99,94 @@ particle_filter(struct particle particles[M], struct anchor anchorMap[], int num
 struct minmax
 get_min_max(struct anchor anchorMap[])
 {
-
 }
 
 /**
  * Reads a file that contains the map of the system and returns it as a anchor struct
  */
 struct anchor
-read_map(char fileName)
+read_map(char fileName[])
 {
 
+    char *buffer = 0;
+    long length;
+    FILE *f = fopen(fileName, "rb");
+
+    if (f)
+    {
+        fseek(f, 0, SEEK_END);
+        length = ftell(f);
+        fseek(f, 0, SEEK_SET);
+        buffer = malloc(length);
+        if (buffer)
+        {
+            fread(buffer, 1, length, f);
+        }
+        fclose(f);
+    }
+
+    //printf("%ld\n", length);
+    struct anchor anchor1;
+    if (buffer)
+    {    
+        int openBrackets = 0;
+        int quotMark = 0;
+        char *name;
+        name = malloc(20);
+        for (int i = 0; i < length; i++)
+        {
+            //printf("%c\n", *(buffer+i));
+            if (buffer[i] == (int)'{')
+            { //"{"
+                openBrackets++;
+                i++;
+            }
+            if (buffer[i] == (int)'}')
+            {
+                openBrackets--;
+                i++;
+            }
+            if (buffer[i] == (int)'"')
+            {
+                quotMark++;
+                quotMark = quotMark % 2;
+                i++;
+            }
+            if (quotMark && openBrackets == 1)
+            {
+                int j = 0;
+                while (quotMark)
+                {
+
+                    name[j] = buffer[i];
+                    i++;
+                    j++;
+                    if (buffer[i] == (int)'"')
+                    {
+                        quotMark++;
+                        quotMark = quotMark % 2;
+                        name[j] = 0;
+                    }
+                }
+                
+                strcpy( anchor1.anchorname, name);
+                printf("%s\n",anchor1.anchorname);
+            }
+        }
+        printf("%s\n", buffer);
+        // start to process your data / extract strings here...
+    }
+    return anchor1;
 }
 
-
-int
-main(void)
+int main(void)
 {
+
+    read_map("coordinates.json");
+
     FILE *fp = fopen("tagdata.json", "r");
-    if(fp == NULL) {
+    if (fp == NULL)
+    {
         perror("Unable to open file!");
         exit(1);
     }
@@ -141,16 +197,20 @@ main(void)
     size_t len = 0;
 
     // Read file line by line
-    while(getline(&line, &len, fp) != -1) {
-        printf("line length: %s\n", line);
-        printf("len %zd\n",len);
+    while (getline(&line, &len, fp) != -1)
+    {
+        //printf("line length: %s\n", line);
+
+        // PARTICLE FILTER GOES HERE
+
+        //printf("len %zd\n", len);
     }
 
-    printf("\n\nMax line size: %zd\n", len);
+    //printf("\n\nMax line size: %zd\n", len);
 
     fclose(fp);
-    free(line);     // getline will resize the input buffer as necessary
-                    // the user needs to free the memory when not needed!
+    free(line); // getline will resize the input buffer as necessary
+                // the user needs to free the memory when not needed!
 
     return 0;
 }
