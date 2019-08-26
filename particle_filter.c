@@ -349,7 +349,7 @@ parse_data(char line[], struct meas measurement[], int numAnchor){
                 }
                 strcpy( measurement[anchorIndex].anchorname, name);
                 
-                printf("name :%s\n",name);
+                //printf("name :%s\n",name);
                 
                 while (line[i] != (int)'}'){
                     i++;
@@ -369,14 +369,16 @@ parse_data(char line[], struct meas measurement[], int numAnchor){
                                 v++;
                             }
                             measurement[anchorIndex].ddist = atof(data);
-                            printf("ddist :%f\n",measurement[anchorIndex].ddist);
+                            //printf("ddist :%f\n",measurement[anchorIndex].ddist);
+                            ddistindx = 0;
                             break;
                         }
                     }
                 }        
+                anchorIndex++;
             }
         }
-        anchorIndex++;
+        addrindx = 0;
     }
 
 }
@@ -423,7 +425,7 @@ int main(void)
         //printf("line : %s\n", line);
 
         int numAnchor = sub_in_str(line, "addr");
-        //printf("%d\n",numAnchor);
+        //printf("num anchors :%d\n",numAnchor);
 
         struct meas measurement[numAnchor];
         
