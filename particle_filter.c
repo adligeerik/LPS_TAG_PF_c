@@ -315,9 +315,70 @@ sub_in_str(char str[], char sub[]){
 /**
  * Parse line from tag and put in a struct list with anchor name and ddist
  */
-struct
-measurment * parse_data(char line[]){
-     
+void
+parse_data(char line[], struct meas measurement[], int numAnchor){
+    int anchorIndex = 0;
+
+    char addr[] = "addr";
+    char ddist[] = "ddist";
+    char tqf[] = "tqf";
+    char rssi[] = "rssi";
+
+    int lineLen = strlen(line);
+    int addrLen = strlen(addr);
+    int ddistLen = strlen(ddist);
+    
+    int addrindx = 0, ddistindx = 0;
+    //printf("%s\n",line);
+    for (int i = 0; i < lineLen;i++)
+    {
+        while (line[i] == addr[addrindx]){
+            addrindx++;
+            i++;
+            // Found an addr
+            if (addrindx == addrLen){
+                char name[8];
+                memset(name,0,strlen(name));
+                i = i + 3; // to skip ":"
+                int v = 0;
+                // Extract the name of the anchor
+                while (line[i] != (int)'"'){
+                    name[v] = line[i];
+                    i++;
+                    v++;
+                }
+                strcpy( measurement[anchorIndex].anchorname, name);
+                
+                printf("name :%s\n",name);
+                
+                while (line[i] != (int)'}'){
+                    i++;
+                    while (line[i] == ddist[ddistindx]){
+                        ddistindx++;
+                        i++;
+                        // Found a ddist
+                        while(ddistindx == ddistLen){
+                            char data[8];
+                            memset(data,0,strlen(data));
+                            i = i + 3; // to skip ":"
+                            v = 0;
+                            // Extract the name of the anchor
+                            while (line[i] != (int)'"'){
+                                data[v] = line[i];
+                                i++;
+                                v++;
+                            }
+                            measurement[anchorIndex].ddist = atof(data);
+                            printf("ddist :%f\n",measurement[anchorIndex].ddist);
+                            break;
+                        }
+                    }
+                }        
+            }
+        }
+        anchorIndex++;
+    }
+
 }
 
 int main(void)
@@ -361,8 +422,12 @@ int main(void)
     {
         //printf("line : %s\n", line);
 
-        //int oc = sub_in_str(line,"addr");
-        //printf("%d\n",oc);
+        int numAnchor = sub_in_str(line, "addr");
+        //printf("%d\n",numAnchor);
+
+        struct meas measurement[numAnchor];
+        
+        parse_data(line,measurement,numAnchor);
 
         // PARTICLE FILTER GOES HERE
 

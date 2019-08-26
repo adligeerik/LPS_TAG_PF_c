@@ -45,8 +45,6 @@ struct minmax{
 struct meas{
     char anchorname[8];
     double ddist;
-    int tqf;
-    double rssi;
 };
 
 struct ddist calculate_ddist(struct particle particles[M],struct anchor anchorMap[], int numAnchors);
@@ -62,7 +60,7 @@ int init(struct particle particles[M], struct minmax minmax);
 double multi_norm_pdf(double *x,double *mu,double *sigma,int numAnchorMeas);
 struct anchor * read_map(char fileName[]);
 struct minmax get_min_max(struct anchor anchorMap[], int numAnchors);
-struct measurment * parseData(char line[]);
+void parse_data(char line[],struct meas measurement[],int numAnchor);
 int sub_in_str(char str[], char sub[]);
 
 int main();
