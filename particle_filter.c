@@ -216,12 +216,13 @@ read_map(char fileName[])
                     strcpy( anchorMap[anchorNum].anchorname, name);
                 }
                 // Parse content of anchor, coordinates and if ref anchor
-                char strVal[30];       
+                char strVal[30] = {0};       
                 char xstr[] = "x";
                 char ystr[] = "y";
                 char zstr[] = "z";
                 char refAncstr[] = "ref_anchor";
                 // x coordinate
+                
                 if (!strcmp(name,xstr)){
                     i++;
                     i++;
@@ -280,13 +281,13 @@ int main(void)
 
     struct anchor *anchorMap = read_map("coordinates.json");
 
-    //for (int i = 0;i<4;i++){
-    //    printf("Anchor name: :%s\n",anchorMap[i].anchorname);
-    //    printf("x pos: %.10lf\n",anchorMap[i].x);
-    //    printf("y Pos: %.10lf\n",anchorMap[i].y);
-    //    printf("z pos: %.10lf\n",anchorMap[i].z);
-    //    printf("Ref acnhor: %d\n",anchorMap[i].ref_anchor);
-    //}
+    for (int i = 0;i<4;i++){
+        printf("Anchor name: :%s\n",anchorMap[i].anchorname);
+        printf("x pos: %.10lf\n",anchorMap[i].x);
+        printf("y Pos: %.10lf\n",anchorMap[i].y);
+        printf("z pos: %.10lf\n",anchorMap[i].z);
+        printf("Ref acnhor: %d\n",anchorMap[i].ref_anchor);
+    }
     
     int numAnchors = 4;
     struct minmax minmax = get_min_max(anchorMap, numAnchors);
@@ -314,7 +315,7 @@ int main(void)
     // Read file line by line
     while (getline(&line, &len, fp) != -1)
     {
-        //printf("line length: %s\n", line);
+        //printf("line : %s\n", line);
 
         // PARTICLE FILTER GOES HERE
 
