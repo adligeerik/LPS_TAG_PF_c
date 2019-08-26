@@ -42,10 +42,7 @@ struct minmax{
     double zmax;
 };
 
-struct meas{
-    char anchorname[8];
-    double ddist;
-};
+
 
 struct ddist calculate_ddist(struct particle particles[M],struct anchor anchorMap[], int numAnchors);
 int move_particle(struct particle particles[M], double acceleration, int timestamp);
@@ -58,10 +55,7 @@ int best_position(struct particle particles[M]);
 int particle_filter(struct particle particles[M], struct anchor anchorMap[], int numAnchors, char dataPackage[]);
 int init(struct particle particles[M], struct minmax minmax);
 double multi_norm_pdf(double *x,double *mu,double *sigma,int numAnchorMeas);
-struct anchor * read_map(char fileName[]);
 struct minmax get_min_max(struct anchor anchorMap[], int numAnchors);
-void parse_data(char line[],struct meas measurement[],int numAnchor);
-int sub_in_str(char str[], char sub[]);
 
 int main();
 
