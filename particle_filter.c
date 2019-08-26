@@ -47,7 +47,8 @@ assign_weight(struct particle particles[M], struct anchor anchorMap[], int numAn
 /**
  * Resampling the particles by the low variance sampling algorithm
  */
-int low_variance_sampling(struct particle particles[M])
+int
+low_variance_sampling(struct particle particles[M])
 {
     return 0;
 }
@@ -55,7 +56,8 @@ int low_variance_sampling(struct particle particles[M])
 /**
  * Chooses the particle with the highest assign_weight
  */
-int highest_weight(struct particle particles[M])
+int
+highest_weight(struct particle particles[M])
 {
     return 0;
 }
@@ -63,7 +65,8 @@ int highest_weight(struct particle particles[M])
 /**
  * Calculates the most likely position of the tag given all the particles
  */
-int best_position(struct particle particles[M])
+int
+best_position(struct particle particles[M])
 {
     return 0;
 }
@@ -71,7 +74,8 @@ int best_position(struct particle particles[M])
 /**
  * Initialise particle positions
  */
-int init(struct particle particles[M], struct minmax minmax)
+int
+init(struct particle particles[M], struct minmax minmax)
 {
     return 0;
 }
@@ -276,18 +280,58 @@ read_map(char fileName[])
     return anchorMap;
 }
 
+
+/**
+ * Calculates the occurance of a substring in a string
+ */
+int 
+sub_in_str(char str[], char sub[]){
+    int l1, l2, count, count1, i, j;
+
+    l1 = strlen(str);
+    l2 = strlen(sub);
+ 
+    for (i = 0; i < l1;)
+    {
+        j = 0;
+        count = 0;
+        while ((str[i] == sub[j]))
+        {
+            count++;
+            i++;
+            j++;
+        }
+        if (count == l2)
+        {
+            count1++;                                   
+            count = 0;
+        }
+        else
+            i++;
+    }
+    return count1;
+}
+
+/**
+ * Parse line from tag and put in a struct list with anchor name and ddist
+ */
+struct
+measurment * parse_data(char line[]){
+     
+}
+
 int main(void)
 {
 
     struct anchor *anchorMap = read_map("coordinates.json");
 
-    for (int i = 0;i<4;i++){
-        printf("Anchor name: :%s\n",anchorMap[i].anchorname);
-        printf("x pos: %.10lf\n",anchorMap[i].x);
-        printf("y Pos: %.10lf\n",anchorMap[i].y);
-        printf("z pos: %.10lf\n",anchorMap[i].z);
-        printf("Ref acnhor: %d\n",anchorMap[i].ref_anchor);
-    }
+    //for (int i = 0;i<4;i++){
+    //    printf("Anchor name: :%s\n",anchorMap[i].anchorname);
+    //    printf("x pos: %.10lf\n",anchorMap[i].x);
+    //    printf("y Pos: %.10lf\n",anchorMap[i].y);
+    //    printf("z pos: %.10lf\n",anchorMap[i].z);
+    //    printf("Ref acnhor: %d\n",anchorMap[i].ref_anchor);
+    //}
     
     int numAnchors = 4;
     struct minmax minmax = get_min_max(anchorMap, numAnchors);
@@ -316,6 +360,9 @@ int main(void)
     while (getline(&line, &len, fp) != -1)
     {
         //printf("line : %s\n", line);
+
+        //int oc = sub_in_str(line,"addr");
+        //printf("%d\n",oc);
 
         // PARTICLE FILTER GOES HERE
 
