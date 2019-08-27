@@ -45,15 +45,21 @@ struct minmax
     double zmax;
 };
 
+struct meas
+{
+    char anchorname[8];
+    double ddist;
+};
+
 struct ddist calculate_ddist(struct particle particles[], struct anchor anchorMap[], int numAnchors);
 int move_particle(struct particle particles[], double acceleration, int timestamp);
 int update_map(struct anchor anchorMap[]);
 int normalize_weight(struct particle particles[]);
-double assign_weight(struct particle particles[], struct anchor anchorMap[], int numAnchors, char measurment[]);
+double assign_weight(struct particle particles[], struct anchor anchorMap[], int numAnchors, struct meas measurement[]);
 int low_variance_sampling(struct particle particles[]);
 int highest_weight(struct particle particles[]);
 int best_position(struct particle particles[]);
-int particle_filter(struct particle particles[], struct anchor anchorMap[], int numAnchors, char dataPackage[]);
+int particle_filter(struct particle particles[], struct anchor anchorMap[], int numAnchors, struct meas measurement[]);
 int init(struct particle particles[], struct minmax minmax);
 double multi_norm_pdf(double *x, double *mu, double *sigma, int numAnchorMeas);
 struct minmax get_min_max(struct anchor anchorMap[], int numAnchors);

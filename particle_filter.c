@@ -11,14 +11,14 @@
  * Calculates the ddist for all particles
  */
 struct ddist
-calculate_ddist(struct particle particles[M], struct anchor anchorMap[], int numAnchors)
+calculate_ddist(struct particle particles[], struct anchor anchorMap[], int numAnchors)
 {
 }
 
 /**
  * Move particles
  */
-int move_particle(struct particle particles[M], double acceleration, int timestamp)
+int move_particle(struct particle particles[], double acceleration, int timestamp)
 {
     return 0;
 }
@@ -34,7 +34,7 @@ int update_map(struct anchor anchorMap[])
 /**
  * Normalize weigth for each particle
  */
-int normalize_weight(struct particle particles[M])
+int normalize_weight(struct particle particles[])
 {
     return 0;
 }
@@ -43,15 +43,16 @@ int normalize_weight(struct particle particles[M])
  * Assign weigth to every particle
  */
 double
-assign_weight(struct particle particles[M], struct anchor anchorMap[], int numAnchors, char measurment[])
+assign_weight(struct particle particles[], struct anchor anchorMap[], int numAnchors, struct meas measurement[])
 {
+
 }
 
 /**
  * Resampling the particles by the low variance sampling algorithm
  */
 int
-low_variance_sampling(struct particle particles[M])
+low_variance_sampling(struct particle particles[])
 {
     return 0;
 }
@@ -60,7 +61,7 @@ low_variance_sampling(struct particle particles[M])
  * Chooses the particle with the highest assign_weight
  */
 int
-highest_weight(struct particle particles[M])
+highest_weight(struct particle particles[])
 {
     return 0;
 }
@@ -69,7 +70,7 @@ highest_weight(struct particle particles[M])
  * Calculates the most likely position of the tag given all the particles
  */
 int
-best_position(struct particle particles[M])
+best_position(struct particle particles[])
 {
     return 0;
 }
@@ -80,9 +81,8 @@ best_position(struct particle particles[M])
 int
 init(struct particle particles[], struct minmax minmax)
 {
-    //time_t t;
+    
     srand(time(0));
-    //srand((unsigned) time(&t));
 
     double x; 
     double y; 
@@ -118,8 +118,18 @@ multi_norm_pdf(double *x, double *mu, double *sigma, int numAnchorMeas)
 /**
  * Particle particle_filter
  */
-int particle_filter(struct particle particles[M], struct anchor anchorMap[], int numAnchors, char dataPackage[])
+int particle_filter(struct particle particles[], struct anchor anchorMap[], int numAnchors, struct meas measurement[])
 {
+    // Calculate weigth
+    double pHigh =  assign_weight(particles, anchorMap, numAnchors, measurement);
+
+    // Normalize weight
+
+    // Resample
+    
+    // Move particles
+
+    // Most likely position
 
     return 0;
 }
@@ -213,14 +223,13 @@ int main(void)
     {
         //printf("line : %s\n", line);
 
+        // Parse line into measurment struct
         int numAnchor = sub_in_str(line, "addr");
-        //printf("num anchors :%d\n",numAnchor);
-
         struct meas measurement[numAnchor];
-        
         parse_data(line,measurement,numAnchor);
 
         // PARTICLE FILTER GOES HERE
+        particle_filter(particles, anchorMap, numAnchors, measurement);
 
     }
 

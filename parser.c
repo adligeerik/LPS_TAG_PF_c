@@ -2,8 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "parser.h"
 #include "particle_filter.h"
+#include "parser.h"
+
 
 /**
  * Reads a file that contains the map of the system and returns it as a anchor struct array
@@ -229,7 +230,7 @@ parse_data(char line[], struct meas measurement[], int numAnchor){
                             memset(data,0,strlen(data));
                             i = i + 3; // to skip ":"
                             v = 0;
-                            // Extract the name of the anchor
+                            // Extract the ddist of the anchor
                             while (line[i] != (int)'"'){
                                 data[v] = line[i];
                                 i++;
