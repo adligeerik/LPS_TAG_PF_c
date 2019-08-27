@@ -90,7 +90,8 @@ init(struct particle particles[], struct minmax minmax)
     double y; 
     double z; 
     
-    for(int i = 0; i < M; i++){
+    for(int i = 0; i < M; i++)
+    {
         //printf("max : %f, min : %f\n", minmax.xmax, minmax.xmin);
         
         x = ((double)rand() * ( minmax.xmax - minmax.xmin ) ) / (double)RAND_MAX + minmax.xmin;
@@ -156,24 +157,31 @@ get_min_max(struct anchor anchorMap[], int numAnchors)
     minmax.zmin = anchorMap[0].z;
     minmax.zmax = anchorMap[0].z;
     
-    for (int i = 1; i < numAnchors; i++){
-        if (minmax.xmax < anchorMap[i].x){
+    for (int i = 1; i < numAnchors; i++)
+    {
+        if (minmax.xmax < anchorMap[i].x)
+        {
             minmax.xmax = anchorMap[i].x;
-        }else
+        }
+        else
         {
             minmax.xmin = anchorMap[i].x;
         }
 
-        if (minmax.ymax < anchorMap[i].y){
+        if (minmax.ymax < anchorMap[i].y)
+        {
             minmax.ymax = anchorMap[i].y;
-        }else
+        }
+        else
         {
             minmax.ymin = anchorMap[i].y;
         }
 
-        if (minmax.zmax < anchorMap[i].z){
+        if (minmax.zmax < anchorMap[i].z)
+        {
             minmax.zmax = anchorMap[i].z;
-        }else
+        }
+        else
         {
             minmax.zmin = anchorMap[i].z;
         }

@@ -83,7 +83,8 @@ read_map(char fileName[])
                     }
                 }
                 // New anchor
-                if(openBrackets == 1){
+                if(openBrackets == 1)
+                {
                     anchorNum++;
                     strcpy( anchorMap[anchorNum].anchorname, name);
                 }
@@ -95,11 +96,13 @@ read_map(char fileName[])
                 char refAncstr[] = "ref_anchor";
                 // x coordinate
                 
-                if (!strcmp(name,xstr)){
+                if (!strcmp(name,xstr))
+                {
                     i++;
                     i++;
                     int j = 0;
-                    while(!(buffer[i] == (int)','||buffer[i] == (int)'\n')){
+                    while(!(buffer[i] == (int)','||buffer[i] == (int)'\n'))
+                    {
                         strVal[j] = buffer[i];
                         i++;
                         j++;
@@ -107,11 +110,13 @@ read_map(char fileName[])
                     anchorMap[anchorNum].x = atof(strVal);
                 }
                 // y coordinate
-                if (!strcmp(name,ystr)){
+                if (!strcmp(name,ystr))
+                {
                     i++;
                     i++;
                     int j = 0;
-                    while(!(buffer[i] == (int)','||buffer[i] == (int)'\n')){
+                    while(!(buffer[i] == (int)','||buffer[i] == (int)'\n'))
+                    {
                         strVal[j] = buffer[i];
                         i++;
                         j++;
@@ -119,11 +124,13 @@ read_map(char fileName[])
                     anchorMap[anchorNum].y = atof(strVal);
                 }
                 // z coordinate
-                if (!strcmp(name,zstr)){
+                if (!strcmp(name,zstr))
+                {
                     i++;
                     i++;
                     int j = 0;
-                    while(!(buffer[i] == (int)','||buffer[i] == (int)'\n')){
+                    while(!(buffer[i] == (int)','||buffer[i] == (int)'\n'))
+                    {
                         strVal[j] = buffer[i];
                         i++;
                         j++;
@@ -131,11 +138,13 @@ read_map(char fileName[])
                     anchorMap[anchorNum].z = atof(strVal);
                 }
                 // ref anchor val
-                if (!strcmp(name,refAncstr)){
+                if (!strcmp(name,refAncstr))
+                {
                     i++;
                     i++;
                     int j = 0;
-                    while(!(buffer[i] == (int)','||buffer[i] == (int)'\n')){
+                    while(!(buffer[i] == (int)','||buffer[i] == (int)'\n'))
+                    {
                         strVal[j] = buffer[i];
                         i++;
                         j++;
@@ -153,7 +162,8 @@ read_map(char fileName[])
  * Calculates the occurance of a substring in a string
  */
 int 
-sub_in_str(char str[], char sub[]){
+sub_in_str(char str[], char sub[])
+{
     int l1, l2, count, count1, i, j;
 
     l1 = strlen(str);
@@ -200,7 +210,8 @@ parse_data(char line[], struct meas measurement[], int numAnchor){
     //printf("%s\n",line);
     for (int i = 0; i < lineLen;i++)
     {
-        while (line[i] == addr[addrindx]){
+        while (line[i] == addr[addrindx])
+        {
             addrindx++;
             i++;
             // Found an addr
@@ -210,7 +221,8 @@ parse_data(char line[], struct meas measurement[], int numAnchor){
                 i = i + 3; // to skip ":"
                 int v = 0;
                 // Extract the name of the anchor
-                while (line[i] != (int)'"'){
+                while (line[i] != (int)'"')
+                {
                     name[v] = line[i];
                     i++;
                     v++;
@@ -221,17 +233,20 @@ parse_data(char line[], struct meas measurement[], int numAnchor){
                 
                 while (line[i] != (int)'}'){
                     i++;
-                    while (line[i] == ddist[ddistindx]){
+                    while (line[i] == ddist[ddistindx])
+                    {
                         ddistindx++;
                         i++;
                         // Found a ddist
-                        while(ddistindx == ddistLen){
+                        while(ddistindx == ddistLen)
+                        {
                             char data[8];
                             memset(data,0,strlen(data));
                             i = i + 3; // to skip ":"
                             v = 0;
                             // Extract the ddist of the anchor
-                            while (line[i] != (int)'"'){
+                            while (line[i] != (int)'"')
+                            {
                                 data[v] = line[i];
                                 i++;
                                 v++;
