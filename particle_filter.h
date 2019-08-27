@@ -7,6 +7,7 @@
 #define PARTICLE_FILTER_H
 
 #define M 100
+#define PI 3.14159265359
 
 struct particle
 {

@@ -3,9 +3,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <math.h>
 
 #include "particle_filter.h"
 #include "parser.h"
+#include "vector_math.h"
 
 /**
  * Calculates the ddist for all particles
@@ -109,10 +111,14 @@ init(struct particle particles[], struct minmax minmax)
 
 /**
  * Calculates the likeliness of the particles ddist given the measurment value
+ * (assumes that Sigma is diagonal, i.e. no covariance) 
  */
 double
 multi_norm_pdf(double *x, double *mu, double *sigma, int numAnchorMeas)
 {
+    int n = numAnchorMeas;
+    double denumerator = 2*pow(PI,(n/2))*sqrt(abs_vector(sigma, n));
+    double a = 1/(2*PI);
 }
 
 /**
