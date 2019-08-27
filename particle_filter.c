@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "particle_filter.h"
 #include "parser.h"
@@ -77,8 +78,32 @@ best_position(struct particle particles[M])
  * Initialise particle positions
  */
 int
-init(struct particle particles[M], struct minmax minmax)
+init(struct particle particles[], struct minmax minmax)
 {
+    //time_t t;
+    srand(time(0));
+    //srand((unsigned) time(&t));
+
+    double x; 
+    double y; 
+    double z; 
+    
+    for(int i = 0; i < M; i++){
+        //printf("max : %f, min : %f\n", minmax.xmax, minmax.xmin);
+        
+        x = ((double)rand() * ( minmax.xmax - minmax.xmin ) ) / (double)RAND_MAX + minmax.xmin;
+        y = ((double)rand() * ( minmax.ymax - minmax.ymin ) ) / (double)RAND_MAX + minmax.ymin;
+        z = ((double)rand() * ( minmax.zmax - minmax.zmin ) ) / (double)RAND_MAX + minmax.zmin;
+
+        particles[i].x = x;
+        particles[i].y = y;
+        particles[i].z = z;
+        particles[i].w = 0;
+
+        //printf("x pos :%f\n", particles[i].x);
+        //printf("i : %d",i);
+    }
+    
     return 0;
 }
 
@@ -116,27 +141,28 @@ get_min_max(struct anchor anchorMap[], int numAnchors)
     minmax.zmax = anchorMap[0].z;
     
     for (int i = 1; i < numAnchors; i++){
-        if (minmax.xmax < anchorMap[0].x){
-            minmax.xmax = anchorMap[0].x;
+        if (minmax.xmax < anchorMap[i].x){
+            minmax.xmax = anchorMap[i].x;
         }else
         {
-            minmax.xmin = anchorMap[0].x;
+            minmax.xmin = anchorMap[i].x;
         }
 
-        if (minmax.ymax < anchorMap[0].y){
-            minmax.ymax = anchorMap[0].y;
+        if (minmax.ymax < anchorMap[i].y){
+            minmax.ymax = anchorMap[i].y;
         }else
         {
-            minmax.ymin = anchorMap[0].y;
+            minmax.ymin = anchorMap[i].y;
         }
 
-        if (minmax.zmax < anchorMap[0].z){
-            minmax.zmax = anchorMap[0].z;
+        if (minmax.zmax < anchorMap[i].z){
+            minmax.zmax = anchorMap[i].z;
         }else
         {
-            minmax.zmin = anchorMap[0].z;
+            minmax.zmin = anchorMap[i].z;
         }
     }
+    //printf("max : %f, min : %f\n", minmax.xmax, minmax.xmin);
     return minmax;
 }
 
@@ -177,6 +203,10 @@ int main(void)
     // This code won't work on Windows
     char *line = NULL;
     size_t len = 0;
+
+    // Init particles
+    struct particle particles[M];
+    init(particles, minmax);
 
     // Read file line by line
     while (getline(&line, &len, fp) != -1)
