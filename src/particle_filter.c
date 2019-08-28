@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,27 +9,35 @@
 #include "vector_math.h"
 
 /**
- * Calculates the ddist for all particles
+ * Calculates the ddist for a particle to all anchors
  */
 struct ddist
-calculate_ddist(struct particle particle, struct anchor anchorMap[], int numAnchors,double ddistList[])
+calculate_ddist(struct particle particle, struct anchor anchorMap[], int numAnchors,double ddistList[], char anchorOrder[][NAME_LEN])
 {
+    int n = numAnchors;
     double ddist =0;
 
     // Distance to ref anchor (master) 
     double refAnchorDist = sqrt(pow(particle.x,2)+ pow(particle.y,2) + pow(particle.z,2));
 
     // Calculate the ddist to all other anchors. ddist is the difference in lenght from the ref_anchor to another anchor.
-    for (int i = 0; i < numAnchors; i++)
+    for (int i = 0; i < n; i++)
     {
-        if (anchorMap[i].ref_anchor == 1)
+        for (int j = 0; j < n; j++)
         {
-            ddistList[i] = 0;
-        }
-        else
-        {
-            ddist = sqrt(pow(anchorMap[i].x-particle.x,2)+pow(anchorMap[i].y-particle.y,2)+pow(anchorMap[i].z-particle.z,2));
-            ddistList[i] = ddist - refAnchorDist;
+            if (!(strcmp(anchorOrder[i],anchorMap[i].anchorname)))
+            {
+                if (anchorMap[i].ref_anchor == 1)
+                {
+                    ddistList[i] = 0;
+                }
+                else
+                {
+                    ddist = sqrt(pow(anchorMap[i].x-particle.x,2)+pow(anchorMap[i].y-particle.y,2)+pow(anchorMap[i].z-particle.z,2));
+                    ddistList[i] = ddist - refAnchorDist;
+                    printf("ddist %f\n", ddistList[i]);
+                }
+            }
         }
     }
 }
@@ -65,7 +72,33 @@ int normalize_weight(struct particle particles[])
 double
 assign_weight(struct particle particles[], struct anchor anchorMap[], int numAnchors, struct meas measurement[])
 {
-    //return pHigh;
+    int n = numAnchors;
+    
+    char anchorOrder[n][NAME_LEN]; 
+    double mean[n];
+
+    double cov[n];
+    double variance = 0.02;
+
+    for (int i = 0; i < n; i++)
+    {
+        strcpy(anchorOrder[i], measurement[i].anchorname);
+        mean[i] = measurement[i].ddist;
+
+        cov[i] = variance;
+    }
+
+    double pHigh = 0;
+    double ddist[n];
+    double ddistList[n];
+    for (int i = 0; i < M; i++)
+    {
+        memset(ddist,0,n*sizeof(ddist[0]));
+        calculate_ddist(particles[i], anchorMap, n, ddistList, anchorOrder);
+
+    }
+    
+    return pHigh;
 }
 
 /**

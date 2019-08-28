@@ -6,6 +6,7 @@
 #ifndef PARTICLE_FILTER_H
 #define PARTICLE_FILTER_H
 
+#define NAME_LEN 6
 #define M 100
 #define PI 3.14159265359
 
@@ -21,14 +22,14 @@ struct particle
 
 struct ddist
 {
-    char anchorname[6];
+    char anchorname[NAME_LEN];
     double ddist;
     int ref_anchor;
 };
 
 struct anchor
 {
-    char anchorname[6];
+    char anchorname[NAME_LEN];
     double x;
     double y;
     double z;
@@ -52,7 +53,7 @@ struct meas
     double ddist;
 };
 
-struct ddist calculate_ddist(struct particle particle, struct anchor anchorMap[], int numAnchors, double ddistList[]);
+struct ddist calculate_ddist(struct particle particle, struct anchor anchorMap[], int numAnchors, double ddistList[], char anchorOrder[][NAME_LEN]);
 int move_particle(struct particle particles[], double acceleration, int timestamp);
 int update_map(struct anchor anchorMap[]);
 int normalize_weight(struct particle particles[]);
