@@ -118,8 +118,20 @@ double
 multi_norm_pdf(double *x, double *mu, double *sigma, int numAnchorMeas)
 {
     int n = numAnchorMeas;
+
+    double xSubmy[n];
+    double sigmInv[n];
+    double xSubmySigma[n];
+
+    sub_vector(x, mu, n, xSubmy); 
+    inv_matrix(sigma,n);
+    element_product(xSubmy,sigmInv,n,xSubmySigma);
+    double exponent = dot_product(xSubmySigma,xSubmy,n);
+
     double denumerator = 2*pow(PI,(n/2))*sqrt(abs_vector(sigma, n));
-    double a = 1/(2*PI);
+    double p = (1/denumerator)*exp(-exponent/2);
+
+    return p;
 }
 
 /**
