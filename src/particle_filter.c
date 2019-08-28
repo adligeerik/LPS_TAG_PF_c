@@ -207,7 +207,7 @@ get_min_max(struct anchor anchorMap[], int numAnchors)
 int main(void)
 {
 
-    struct anchor *anchorMap = read_map("coordinates.json");
+    struct anchor *anchorMap = read_map("../data/coordinates.json");
 
     //for (int i = 0;i<4;i++){
     //    printf("Anchor name: :%s\n",anchorMap[i].anchorname);
@@ -228,7 +228,7 @@ int main(void)
     //printf("z min: %lf\n",minmax.zmax);
 
 
-    FILE *fp = fopen("tagdata.json", "r");
+    FILE *fp = fopen("../data/tagdata.json", "r");
     if (fp == NULL)
     {
         perror("Unable to open file!");
