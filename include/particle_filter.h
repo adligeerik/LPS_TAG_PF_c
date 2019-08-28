@@ -52,7 +52,7 @@ struct meas
     double ddist;
 };
 
-struct ddist calculate_ddist(struct particle particles[], struct anchor anchorMap[], int numAnchors);
+struct ddist calculate_ddist(struct particle particle, struct anchor anchorMap[], int numAnchors, double ddistList[]);
 int move_particle(struct particle particles[], double acceleration, int timestamp);
 int update_map(struct anchor anchorMap[]);
 int normalize_weight(struct particle particles[]);

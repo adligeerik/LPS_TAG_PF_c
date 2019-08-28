@@ -13,8 +13,26 @@
  * Calculates the ddist for all particles
  */
 struct ddist
-calculate_ddist(struct particle particles[], struct anchor anchorMap[], int numAnchors)
+calculate_ddist(struct particle particle, struct anchor anchorMap[], int numAnchors,double ddistList[])
 {
+    double ddist =0;
+
+    // Distance to ref anchor (master) 
+    double refAnchorDist = sqrt(pow(particle.x,2)+ pow(particle.y,2) + pow(particle.z,2));
+
+    // Calculate the ddist to all other anchors. ddist is the difference in lenght from the ref_anchor to another anchor.
+    for (int i = 0; i < numAnchors; i++)
+    {
+        if (anchorMap[i].ref_anchor == 1)
+        {
+            ddistList[i] = 0;
+        }
+        else
+        {
+            ddist = sqrt(pow(anchorMap[i].x-particle.x,2)+pow(anchorMap[i].y-particle.y,2)+pow(anchorMap[i].z-particle.z,2));
+            ddistList[i] = ddist - refAnchorDist;
+        }
+    }
 }
 
 /**
@@ -47,7 +65,7 @@ int normalize_weight(struct particle particles[])
 double
 assign_weight(struct particle particles[], struct anchor anchorMap[], int numAnchors, struct meas measurement[])
 {
-
+    //return pHigh;
 }
 
 /**
@@ -139,7 +157,7 @@ multi_norm_pdf(double *x, double *mu, double *sigma, int numAnchorMeas)
  */
 int particle_filter(struct particle particles[], struct anchor anchorMap[], int numAnchors, struct meas measurement[])
 {
-    // Calculate weigth
+    // Calculate weight
     double pHigh =  assign_weight(particles, anchorMap, numAnchors, measurement);
 
     // Normalize weight
