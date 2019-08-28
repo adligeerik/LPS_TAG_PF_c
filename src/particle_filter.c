@@ -124,7 +124,7 @@ multi_norm_pdf(double *x, double *mu, double *sigma, int numAnchorMeas)
     double xSubmySigma[n];
 
     sub_vector(x, mu, n, xSubmy); 
-    inv_matrix(sigma,n);
+    inv_matrix(sigma,n,sigmInv);
     element_product(xSubmy,sigmInv,n,xSubmySigma);
     double exponent = dot_product(xSubmySigma,xSubmy,n);
 
@@ -207,6 +207,13 @@ get_min_max(struct anchor anchorMap[], int numAnchors)
 int main(void)
 {
 
+    double x[2] = {3,1};
+    double mu[2] = {3,2};
+    double sigma[2] = {3,4};
+    double ans = multi_norm_pdf(x,mu,sigma,2);
+
+    printf("ans %f",ans);
+
     struct anchor *anchorMap = read_map("../data/coordinates.json");
 
     //for (int i = 0;i<4;i++){
@@ -226,6 +233,7 @@ int main(void)
     //printf("x min: %lf\n",minmax.xmax);
     //printf("y min: %lf\n",minmax.ymax);
     //printf("z min: %lf\n",minmax.zmax);
+
 
 
     FILE *fp = fopen("../data/tagdata.json", "r");
