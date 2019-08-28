@@ -25,7 +25,7 @@ calculate_ddist(struct particle particle, struct anchor anchorMap[], int numAnch
     {
         for (int j = 0; j < n; j++)
         {
-            if (!(strcmp(anchorOrder[i],anchorMap[i].anchorname)))
+            if ((strcmp(anchorOrder[j],anchorMap[i].anchorname)) == 0)
             {
                 if (anchorMap[i].ref_anchor == 1)
                 {
@@ -35,7 +35,7 @@ calculate_ddist(struct particle particle, struct anchor anchorMap[], int numAnch
                 {
                     ddist = sqrt(pow(anchorMap[i].x-particle.x,2)+pow(anchorMap[i].y-particle.y,2)+pow(anchorMap[i].z-particle.z,2));
                     ddistList[i] = ddist - refAnchorDist;
-                    printf("ddist %f\n", ddistList[i]);
+                    //printf("ddist %f\n", ddistList[i]);
                 }
             }
         }
@@ -90,11 +90,18 @@ assign_weight(struct particle particles[], struct anchor anchorMap[], int numAnc
 
     double pHigh = 0;
     double ddist[n];
-    double ddistList[n];
+    double p;
     for (int i = 0; i < M; i++)
     {
         memset(ddist,0,n*sizeof(ddist[0]));
-        calculate_ddist(particles[i], anchorMap, n, ddistList, anchorOrder);
+        calculate_ddist(particles[i], anchorMap, n, ddist, anchorOrder);
+        p = multi_norm_pdf(ddist, mean, cov, n);
+        //printf("p %f\n",p);
+        particles[i].w = p;
+        if (p > pHigh)
+        {
+            pHigh = p;
+        }
 
     }
     
