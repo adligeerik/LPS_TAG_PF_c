@@ -206,14 +206,6 @@ get_min_max(struct anchor anchorMap[], int numAnchors)
 
 int main(void)
 {
-
-    double x[2] = {3,1};
-    double mu[2] = {3,2};
-    double sigma[2] = {3,4};
-    double ans = multi_norm_pdf(x,mu,sigma,2);
-
-    printf("ans %f",ans);
-
     struct anchor *anchorMap = read_map("../data/coordinates.json");
 
     //for (int i = 0;i<4;i++){
