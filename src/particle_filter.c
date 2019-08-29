@@ -45,8 +45,14 @@ calculate_ddist(struct particle particle, struct anchor anchorMap[], int numAnch
 /**
  * Move particles
  */
-int move_particle(struct particle particles[], double acceleration, int timestamp)
+int move_particle(struct particle particles[])
 {
+    for (int i = 0; i < M; i++)
+    {
+        particles[i].x = particles[i].x + gauss(0,VAR_ACC)/1;
+        particles[i].x = particles[i].x + gauss(0,VAR_ACC)/1;
+        particles[i].x = particles[i].x + gauss(0,VAR_ACC)/1;
+    }
     return 0;
 }
 
@@ -138,6 +144,10 @@ low_variance_sampling(struct particle particles[], struct particle newParticles[
             i++;
             c = c + particles[i].w;
         }
+        newParticles[m].x = particles[i].x;
+        newParticles[m].y = particles[i].y;
+        newParticles[m].z = particles[i].z;
+        newParticles[m].w = particles[i].w;
         
     }
     return newParticles;
@@ -147,8 +157,16 @@ low_variance_sampling(struct particle particles[], struct particle newParticles[
  * Chooses the particle with the highest assign_weight
  */
 int
-highest_weight(struct particle particles[])
+highest_weight(struct particle particles[], struct particle bestParticle)
 {
+    double highestP = 0;
+    for (int i = 0; i < M; i++)
+    {
+        if (particles[i].w > highestP)
+        {
+            highestP = particles[i].w;
+        }
+    }
     return 0;
 }
 
@@ -156,8 +174,9 @@ highest_weight(struct particle particles[])
  * Calculates the most likely position of the tag given all the particles
  */
 int
-best_position(struct particle particles[])
+best_position(struct particle particles[], struct particle bestParticle)
 {
+
     return 0;
 }
 
@@ -221,7 +240,7 @@ multi_norm_pdf(double *x, double *mu, double *sigma, int numAnchorMeas)
 /**
  * Particle particle_filter
  */
-int particle_filter(struct particle particles[], struct anchor anchorMap[], int numAnchors, struct meas measurement[], struct particle newParticles[])
+int particle_filter(struct particle particles[], struct anchor anchorMap[], int numAnchors, struct meas measurement[], struct particle newParticles[], struct particle bestParticle)
 {
     // Calculate weight
     double pHigh =  assign_weight(particles, anchorMap, numAnchors, measurement);
@@ -233,10 +252,10 @@ int particle_filter(struct particle particles[], struct anchor anchorMap[], int 
     particles = low_variance_sampling(particles, newParticles);
     
     // Move particles
-    //move_particle(particles);
+    move_particle(particles);
 
     // Most likely position
-    best_position(particles);
+    best_position(particles, bestParticle);
 
     return 0;
 }
@@ -335,6 +354,9 @@ int main(void)
     // Particles for resampling
     struct particle newParticles[M];
 
+    // Moast likely position
+    struct particle bestParticle;
+
     // Read file line by line
     while (getline(&line, &len, fp) != -1)
     {
@@ -346,7 +368,7 @@ int main(void)
         parse_data(line,measurement,numAnchor);
 
         // PARTICLE FILTER GOES HERE
-        particle_filter(particles, anchorMap, numAnchors, measurement, newParticles);
+        particle_filter(particles, anchorMap, numAnchors, measurement, newParticles, bestParticle);
 
     }
 

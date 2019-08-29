@@ -82,3 +82,13 @@ element_product(double *vec1, double *vec2, int vecLen, double *result)
     }
     return 0;
 }
+
+/**
+ * Gives a number between min and max with a normal distrubution
+ */
+double 
+gauss(double min, double max)
+{
+    double result;
+    return result;
+}
