@@ -63,6 +63,17 @@ int update_map(struct anchor anchorMap[])
  */
 int normalize_weight(struct particle particles[])
 {
+    double weightSum = 0;
+    // For each particle
+    for (int i = 0; i < M; i++)
+    {
+        weightSum = weightSum + particles[i].w;
+    }
+
+    for (int i = 0; i < M; i++)
+    {
+        particles[i].w = particles[i].w/weightSum;
+    }
     return 0;
 }
 
