@@ -9,6 +9,7 @@
 #define NAME_LEN 6 // Max Lenght of anchor NAME_LEN 
 #define M 100 // Number of particles
 #define PI 3.14159265359
+#define TAU 6.28318530718
 #define VAR_ACC 1
 
 struct particle
