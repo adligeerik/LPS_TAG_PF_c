@@ -122,10 +122,25 @@ assign_weight(struct particle particles[], struct anchor anchorMap[], int numAnc
 /**
  * Resampling the particles by the low variance sampling algorithm
  */
-int
-low_variance_sampling(struct particle particles[])
+struct particle *
+low_variance_sampling(struct particle particles[], struct particle newParticles[])
 {
-    return 0;
+    double inM = 1/M;
+    double c = particles[0].w;
+    int i = 0;
+    double U;
+    double r = rand()/((double)RAND_MAX*M);
+    for (int m = 0; m < M; m++)
+    {
+        U = r + m*inM;
+        while (U > c)
+        {
+            i++;
+            c = c + particles[i].w;
+        }
+        
+    }
+    return newParticles;
 }
 
 /**
@@ -206,18 +221,22 @@ multi_norm_pdf(double *x, double *mu, double *sigma, int numAnchorMeas)
 /**
  * Particle particle_filter
  */
-int particle_filter(struct particle particles[], struct anchor anchorMap[], int numAnchors, struct meas measurement[])
+int particle_filter(struct particle particles[], struct anchor anchorMap[], int numAnchors, struct meas measurement[], struct particle newParticles[])
 {
     // Calculate weight
     double pHigh =  assign_weight(particles, anchorMap, numAnchors, measurement);
 
     // Normalize weight
+    normalize_weight(particles);
 
     // Resample
+    particles = low_variance_sampling(particles, newParticles);
     
     // Move particles
+    //move_particle(particles);
 
     // Most likely position
+    best_position(particles);
 
     return 0;
 }
@@ -313,6 +332,9 @@ int main(void)
     struct particle particles[M];
     init(particles, minmax);
 
+    // Particles for resampling
+    struct particle newParticles[M];
+
     // Read file line by line
     while (getline(&line, &len, fp) != -1)
     {
@@ -324,7 +346,7 @@ int main(void)
         parse_data(line,measurement,numAnchor);
 
         // PARTICLE FILTER GOES HERE
-        particle_filter(particles, anchorMap, numAnchors, measurement);
+        particle_filter(particles, anchorMap, numAnchors, measurement, newParticles);
 
     }
 
