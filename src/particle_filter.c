@@ -7,6 +7,7 @@
 #include "particle_filter.h"
 #include "parser.h"
 #include "vector_math.h"
+#include "file_handler.h"
 
 /**
  * Calculates the ddist for a particle to all anchors
@@ -324,6 +325,8 @@ int main(void)
     //}
     
     int numAnchors = 4;
+    write_file_anchor(anchorMap, "../plot_data/anchors.dat", numAnchors);
+
     struct minmax minmax = get_min_max(anchorMap, numAnchors);
 
     //printf("x max: %lf\n",minmax.xmax);

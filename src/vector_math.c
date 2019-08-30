@@ -82,6 +82,7 @@ element_product(double *vec1, double *vec2, int vecLen, double *result)
 
 /**
  * Gives a number from a gaussian distrubution with mean and variance
+ * taken from https://phoxis.org/2013/05/04/generating-random-numbers-from-normal-distribution-in-c/
  */
 double
 gauss(double mu, double sigma)
