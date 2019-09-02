@@ -37,9 +37,9 @@ write_file_particle(struct particle *particles, char *fileName)
         snprintf(z, 50, "%f", particles[i].z);
 
         fprintf(fptr,"%s", x);
-        fprintf(fptr,",");
+        fprintf(fptr," ");
         fprintf(fptr,"%s", y);
-        fprintf(fptr,",");
+        fprintf(fptr," ");
         fprintf(fptr,"%s", z);
         fprintf(fptr,"\n");
     }
@@ -80,9 +80,9 @@ write_file_anchor(struct anchor *anchors, char *fileName, int numAnchors)
         snprintf(z, 50, "%f", anchors[i].z);
 
         fprintf(fptr,"%s", x);
-        fprintf(fptr,",");
+        fprintf(fptr," ");
         fprintf(fptr,"%s", y);
-        fprintf(fptr,",");
+        fprintf(fptr," ");
         fprintf(fptr,"%s", z);
         fprintf(fptr,"\n");
     }

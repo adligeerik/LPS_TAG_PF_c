@@ -4,7 +4,7 @@
 
 #define COORD_STRING_LEN 50
 
-void write_file(struct particle *particles, char *fileName);
+void write_file_particle(struct particle *particles, char *fileName);
 void write_file_anchor(struct anchor *anchors, char *fileName, int numAnchors);
 
 #endif

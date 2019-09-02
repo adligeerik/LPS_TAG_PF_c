@@ -372,7 +372,7 @@ int main(void)
 
         // PARTICLE FILTER GOES HERE
         particle_filter(particles, anchorMap, numAnchors, measurement, newParticles, bestParticle);
-
+        write_file_particle(particles, "../plot_data/particles.dat");
     }
 
     //printf("\n\nMax line size: %zd\n", len);
