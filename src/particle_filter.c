@@ -53,6 +53,7 @@ int move_particle(struct particle particles[])
         particles[i].x = particles[i].x + gauss(0,VAR_ACC)/1;
         particles[i].x = particles[i].x + gauss(0,VAR_ACC)/1;
         particles[i].x = particles[i].x + gauss(0,VAR_ACC)/1;
+
     }
     return 0;
 }
@@ -81,6 +82,7 @@ int normalize_weight(struct particle particles[])
     {
         particles[i].w = particles[i].w/weightSum;
     }
+
     return 0;
 }
 
@@ -198,9 +200,9 @@ init(struct particle particles[], struct minmax minmax)
     {
         //printf("max : %f, min : %f\n", minmax.xmax, minmax.xmin);
         
-        x = ((double)rand() * ( minmax.xmax - minmax.xmin ) ) / (double)RAND_MAX + minmax.xmin;
-        y = ((double)rand() * ( minmax.ymax - minmax.ymin ) ) / (double)RAND_MAX + minmax.ymin;
-        z = ((double)rand() * ( minmax.zmax - minmax.zmin ) ) / (double)RAND_MAX + minmax.zmin;
+        x = ((double)rand() * ( (minmax.xmax+0.5) - (minmax.xmin-0.5) ) ) / (double)RAND_MAX + minmax.xmin;
+        y = ((double)rand() * ( (minmax.ymax+0.5) - (minmax.ymin-0.5) ) ) / (double)RAND_MAX + minmax.ymin;
+        z = ((double)rand() * ( (minmax.zmax+0.5) - (minmax.zmin-0.5) ) ) / (double)RAND_MAX + minmax.zmin;
 
         particles[i].x = x;
         particles[i].y = y;
@@ -250,8 +252,10 @@ int particle_filter(struct particle particles[], struct anchor anchorMap[], int 
     normalize_weight(particles);
 
     // Resample
+    printf("before : %d\n",particles);
     particles = low_variance_sampling(particles, newParticles);
-    
+    printf("after : %d\n",particles);
+
     // Move particles
     move_particle(particles);
 
@@ -283,7 +287,7 @@ get_min_max(struct anchor anchorMap[], int numAnchors)
         {
             minmax.xmax = anchorMap[i].x;
         }
-        else
+        else if (minmax.xmin > anchorMap[i].x)
         {
             minmax.xmin = anchorMap[i].x;
         }
@@ -292,7 +296,7 @@ get_min_max(struct anchor anchorMap[], int numAnchors)
         {
             minmax.ymax = anchorMap[i].y;
         }
-        else
+        else if (minmax.ymin > anchorMap[i].x)
         {
             minmax.ymin = anchorMap[i].y;
         }
@@ -301,7 +305,7 @@ get_min_max(struct anchor anchorMap[], int numAnchors)
         {
             minmax.zmax = anchorMap[i].z;
         }
-        else
+        else if (minmax.zmin > anchorMap[i].x)
         {
             minmax.zmin = anchorMap[i].z;
         }
@@ -360,6 +364,7 @@ int main(void)
     // Moast likely position
     struct particle bestParticle;
 
+    int index = 0;
     // Read file line by line
     while (getline(&line, &len, fp) != -1)
     {
@@ -372,7 +377,9 @@ int main(void)
 
         // PARTICLE FILTER GOES HERE
         particle_filter(particles, anchorMap, numAnchors, measurement, newParticles, bestParticle);
+
         write_file_particle(particles, "../plot_data/particles.dat");
+
     }
 
     //printf("\n\nMax line size: %zd\n", len);
@@ -381,5 +388,6 @@ int main(void)
     free(line); // getline will resize the input buffer as necessary
                 // the user needs to free the memory when not needed!
 
+    printf("Done\n");
     return 0;
 }

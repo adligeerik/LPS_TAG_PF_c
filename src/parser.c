@@ -208,59 +208,62 @@ parse_data(char line[], struct meas measurement[], int numAnchor){
     
     int addrindx = 0, ddistindx = 0;
     //printf("%s\n",line);
-    for (int i = 0; i < lineLen;i++)
+    if (line[0] == (int)'{')
     {
-        while (line[i] == addr[addrindx])
+        for (int i = 0; i < lineLen;i++)
         {
-            addrindx++;
-            i++;
-            // Found an addr
-            if (addrindx == addrLen){
-                char name[8];
-                memset(name,0,strlen(name));
-                i = i + 3; // to skip ":"
-                int v = 0;
-                // Extract the name of the anchor
-                while (line[i] != (int)'"')
-                {
-                    name[v] = line[i];
-                    i++;
-                    v++;
-                }
-                strcpy( measurement[anchorIndex].anchorname, name);
-                
-                //printf("name :%s\n",name);
-                
-                while (line[i] != (int)'}'){
-                    i++;
-                    while (line[i] == ddist[ddistindx])
+            while (line[i] == addr[addrindx])
+            {
+                addrindx++;
+                i++;
+                // Found an addr
+                if (addrindx == addrLen){
+                    char name[8];
+                    memset(name,0,strlen(name));
+                    i = i + 3; // to skip ":"
+                    int v = 0;
+                    // Extract the name of the anchor
+                    while (line[i] != (int)'"')
                     {
-                        ddistindx++;
+                        name[v] = line[i];
                         i++;
-                        // Found a ddist
-                        while(ddistindx == ddistLen)
-                        {
-                            char data[8];
-                            memset(data,0,strlen(data));
-                            i = i + 3; // to skip ":"
-                            v = 0;
-                            // Extract the ddist of the anchor
-                            while (line[i] != (int)'"')
-                            {
-                                data[v] = line[i];
-                                i++;
-                                v++;
-                            }
-                            measurement[anchorIndex].ddist = atof(data);
-                            //printf("ddist :%f\n",measurement[anchorIndex].ddist);
-                            ddistindx = 0;
-                            break;
-                        }
+                        v++;
                     }
-                }        
-                anchorIndex++;
+                    strcpy( measurement[anchorIndex].anchorname, name);
+
+                    //printf("name :%s\n",name);
+
+                    while (line[i] != (int)'}'){
+                        i++;
+                        while (line[i] == ddist[ddistindx])
+                        {
+                            ddistindx++;
+                            i++;
+                            // Found a ddist
+                            while(ddistindx == ddistLen)
+                            {
+                                char data[8];
+                                memset(data,0,strlen(data));
+                                i = i + 3; // to skip ":"
+                                v = 0;
+                                // Extract the ddist of the anchor
+                                while (line[i] != (int)'"')
+                                {
+                                    data[v] = line[i];
+                                    i++;
+                                    v++;
+                                }
+                                measurement[anchorIndex].ddist = atof(data);
+                                //printf("ddist :%f\n",measurement[anchorIndex].ddist);
+                                ddistindx = 0;
+                                break;
+                            }
+                        }
+                    }        
+                    anchorIndex++;
+                }
             }
+            addrindx = 0;
         }
-        addrindx = 0;
     }
 }
