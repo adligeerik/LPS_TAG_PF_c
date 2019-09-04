@@ -90,8 +90,9 @@ int normalize_weight(struct particle particles[])
  * Assign weigth to every particle
  */
 double
-assign_weight(struct particle particles[], struct anchor anchorMap[], int numAnchors, struct meas measurement[])
+assign_weight(struct particle *particles, struct anchor anchorMap[], int numAnchors, struct meas measurement[])
 {
+    printf("particles[i].w :%f\n", particles[0].w);
     int n = numAnchors;
     
     char anchorOrder[n][NAME_LEN]; 
@@ -132,10 +133,10 @@ assign_weight(struct particle particles[], struct anchor anchorMap[], int numAnc
  * Resampling the particles by the low variance sampling algorithm
  */
 struct particle *
-low_variance_sampling(struct particle particles[], struct particle newParticles[])
+low_variance_sampling(struct particle **particles, struct particle **newParticles)
 {
     double inM = 1/M;
-    double c = particles[0].w;
+    double c = (*particles)->w;
     int i = 0;
     double U;
     double r = rand()/((double)RAND_MAX*M);
@@ -145,15 +146,15 @@ low_variance_sampling(struct particle particles[], struct particle newParticles[
         while (U > c)
         {
             i++;
-            c = c + particles[i].w;
+            c = c + (*particles+i)->w;
         }
-        newParticles[m].x = particles[i].x;
-        newParticles[m].y = particles[i].y;
-        newParticles[m].z = particles[i].z;
-        newParticles[m].w = particles[i].w;
+        (*newParticles+m)->x = (*particles+i)->x;
+        (*newParticles+m)->y = (*particles+i)->y;
+        (*newParticles+m)->z = (*particles+i)->z;
+        (*newParticles+m)->w = (*particles+i)->w;
         
     }
-    return newParticles;
+    return *newParticles;
 }
 
 /**
@@ -187,7 +188,7 @@ best_position(struct particle particles[], struct particle bestParticle)
  * Initialise particle positions
  */
 int
-init(struct particle particles[], struct minmax minmax)
+init(struct particle **particles, struct minmax minmax)
 {
     
     srand(time(0));
@@ -204,10 +205,10 @@ init(struct particle particles[], struct minmax minmax)
         y = ((double)rand() * ( (minmax.ymax+0.5) - (minmax.ymin-0.5) ) ) / (double)RAND_MAX + minmax.ymin;
         z = ((double)rand() * ( (minmax.zmax+0.5) - (minmax.zmin-0.5) ) ) / (double)RAND_MAX + minmax.zmin;
 
-        particles[i].x = x;
-        particles[i].y = y;
-        particles[i].z = z;
-        particles[i].w = 0;
+        (*particles+i)->x = x;
+        (*particles+i)->y = y;
+        (*particles+i)->z = z;
+        (*particles+i)->w = 0;
 
         //printf("x pos :%f\n", particles[i].x);
         //printf("i : %d",i);
@@ -243,24 +244,25 @@ multi_norm_pdf(double *x, double *mu, double *sigma, int numAnchorMeas)
 /**
  * Particle particle_filter
  */
-int particle_filter(struct particle particles[], struct anchor anchorMap[], int numAnchors, struct meas measurement[], struct particle newParticles[], struct particle bestParticle)
+int particle_filter(struct particle **particles, struct anchor *anchorMap, int numAnchors, struct meas *measurement, struct particle **newParticles, struct particle bestParticle)
 {
     // Calculate weight
-    double pHigh =  assign_weight(particles, anchorMap, numAnchors, measurement);
+    double pHigh =  assign_weight(*particles, anchorMap, numAnchors, measurement);
 
     // Normalize weight
-    normalize_weight(particles);
+    normalize_weight(*particles);
 
     // Resample
-    printf("before : %d\n",particles);
-    particles = low_variance_sampling(particles, newParticles);
-    printf("after : %d\n",particles);
+    struct particle *temp = *particles;
+    struct particle **newParticles_pp = newParticles;
+    *particles = low_variance_sampling(particles, newParticles_pp);
+    *newParticles = temp;
 
     // Move particles
-    move_particle(particles);
+    move_particle(*particles);
 
     // Most likely position
-    best_position(particles, bestParticle);
+    best_position(*particles, bestParticle);
 
     return 0;
 }
@@ -356,10 +358,16 @@ int main(void)
 
     // Init particles
     struct particle particles[M];
-    init(particles, minmax);
+    struct particle *particles_p = particles;
+    struct particle **particles_pp = &particles_p;
+    init(particles_pp, minmax);
+
+    //printf("pp particle %f\n", (*particles_pp)->x);
 
     // Particles for resampling
     struct particle newParticles[M];
+    struct particle *newParticles_ptr = newParticles;
+    struct particle **newParticles_pp = &newParticles_ptr;
 
     // Moast likely position
     struct particle bestParticle;
@@ -376,7 +384,12 @@ int main(void)
         parse_data(line,measurement,numAnchor);
 
         // PARTICLE FILTER GOES HERE
-        particle_filter(particles, anchorMap, numAnchors, measurement, newParticles, bestParticle);
+        //printf("\n\n\n===============\n\n\n");
+        //printf("Address before, particles_pp: %p\n", (*particles_pp));
+        //printf("Address before, newParticles_pp: %p\n", (*newParticles_pp));
+        particle_filter(particles_pp, anchorMap, numAnchors, measurement, newParticles_pp, bestParticle);
+        //printf("Address after, particles_pp: %p\n", (*particles_pp));
+        //printf("Address after, newParticles_pp: %p\n", (*newParticles_pp));
 
         write_file_particle(particles, "../plot_data/particles.dat");
 
