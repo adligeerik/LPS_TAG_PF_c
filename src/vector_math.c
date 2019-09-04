@@ -109,6 +109,5 @@ gauss(double mu, double sigma)
     X2 = U2 * mult;
 
     call = !call;
-    //printf("h3j\n");
     return (mu + sigma * (double)X1);
 }

@@ -41,6 +41,7 @@ calculate_ddist(struct particle particle, struct anchor anchorMap[], int numAnch
             }
         }
     }
+    //printf("ddist %f\n", ddistList[0]);
 }
 
 /**
@@ -50,9 +51,9 @@ int move_particle(struct particle particles[])
 {
     for (int i = 0; i < M; i++)
     {
-        particles[i].x = particles[i].x + gauss(0,VAR_ACC)/1;
-        particles[i].x = particles[i].x + gauss(0,VAR_ACC)/1;
-        particles[i].x = particles[i].x + gauss(0,VAR_ACC)/1;
+        particles[i].x = particles[i].x + gauss(0,VAR_ACC)/5;
+        particles[i].y = particles[i].y + gauss(0,VAR_ACC)/5;
+        particles[i].z = particles[i].z + gauss(0,VAR_ACC)/5;
 
     }
     return 0;
@@ -77,12 +78,11 @@ int normalize_weight(struct particle particles[])
     {
         weightSum = weightSum + particles[i].w;
     }
-
+    //printf("sumw: %e\n",weightSum);
     for (int i = 0; i < M; i++)
     {
         particles[i].w = particles[i].w/weightSum;
-    }
-
+    }    
     return 0;
 }
 
@@ -92,7 +92,6 @@ int normalize_weight(struct particle particles[])
 double
 assign_weight(struct particle *particles, struct anchor anchorMap[], int numAnchors, struct meas measurement[])
 {
-    printf("particles[i].w :%f\n", particles[0].w);
     int n = numAnchors;
     
     char anchorOrder[n][NAME_LEN]; 
@@ -116,6 +115,7 @@ assign_weight(struct particle *particles, struct anchor anchorMap[], int numAnch
     {
         memset(ddist,0,n*sizeof(ddist[0]));
         calculate_ddist(particles[i], anchorMap, n, ddist, anchorOrder);
+        //printf("ddist[0] : %f\n",ddist[0]);
         p = multi_norm_pdf(ddist, mean, cov, n);
         //printf("p %f\n",p);
         particles[i].w = p;
@@ -125,7 +125,7 @@ assign_weight(struct particle *particles, struct anchor anchorMap[], int numAnch
         }
 
     }
-    
+    //printf("pHigh :%f\n",pHigh);
     return pHigh;
 }
 
@@ -319,7 +319,7 @@ get_min_max(struct anchor anchorMap[], int numAnchors)
 
 
 int main(void)
-{
+{   
     struct anchor *anchorMap = read_map("../data/coordinates.json");
 
     //for (int i = 0;i<4;i++){
@@ -364,7 +364,9 @@ int main(void)
 
     //printf("pp particle %f\n", (*particles_pp)->x);
 
-    // Particles for resampling
+    // Particles for resampling, two sets of struct arrays are needed 
+    // for the resampling where the old particles goes into the new 
+    // list and then the pointer is set to the new one and vise vers.
     struct particle newParticles[M];
     struct particle *newParticles_ptr = newParticles;
     struct particle **newParticles_pp = &newParticles_ptr;
@@ -391,8 +393,10 @@ int main(void)
         //printf("Address after, particles_pp: %p\n", (*particles_pp));
         //printf("Address after, newParticles_pp: %p\n", (*newParticles_pp));
 
-        write_file_particle(particles, "../plot_data/particles.dat");
-
+        char buf[40];
+        snprintf(buf, 40, "../plot_data/particles_%d.dat", index);
+        write_file_particle(particles, buf);
+        index++;
     }
 
     //printf("\n\nMax line size: %zd\n", len);
