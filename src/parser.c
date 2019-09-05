@@ -153,7 +153,9 @@ read_map(char fileName[])
                 }
             }
         }
+        free(name);
     }
+    free(buffer);
     return anchorMap;
 }
 
@@ -164,7 +166,7 @@ read_map(char fileName[])
 int 
 sub_in_str(char str[], char sub[])
 {
-    int l1, l2, count, count1, i, j;
+    int l1 = 0, l2 = 0, count = 0, count1 = 0, i = 0, j = 0;
 
     l1 = strlen(str);
     l2 = strlen(sub);

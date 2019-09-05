@@ -368,21 +368,23 @@ int main(void)
     struct particle *newParticles = malloc(M*sizeof(struct particle));
     struct particle **newParticles_pp = &newParticles;
 
-    // Moast likely position
+    // Most likely position
     struct particle bestParticle;
 
+
     int index = 0;
+    int numAnchor = 0;
     // Read file line by line
     while (getline(&line, &len, fp) != -1)
     {
         //printf("line : %s\n", line);
-        
         char buf[40];
         snprintf(buf, 40, "../plot_data/particles_%d.dat", index);
         write_file_particle(*particles_pp, buf);
 
         // Parse line into measurment struct
-        int numAnchor = sub_in_str(line, "addr");
+        numAnchor = sub_in_str(line, "addr");
+        //printf("numanchor : %d\n",numAnchor);
         struct meas measurement[numAnchor];
         parse_data(line,measurement,numAnchor);
 
@@ -394,7 +396,7 @@ int main(void)
         //printf("Address after, particles_pp: %p\n", (*particles_pp));
         //printf("Address after, newParticles_pp: %p\n", (*newParticles_pp));
 
-        printf("particle pp: %e\n", (*particles_pp)->w);
+        //printf("particle pp: %e\n", (*particles_pp)->w);
 
         index++;
     }
