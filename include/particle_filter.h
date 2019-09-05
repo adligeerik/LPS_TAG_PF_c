@@ -54,18 +54,18 @@ struct meas
     double ddist;
 };
 
-struct ddist calculate_ddist(struct particle particle, struct anchor anchorMap[], int numAnchors, double ddistList[], char anchorOrder[][NAME_LEN]);
-int move_particle(struct particle particles[]);
-int update_map(struct anchor anchorMap[]);
-int normalize_weight(struct particle particles[]);
+struct ddist calculate_ddist(struct particle particle, struct anchor *anchorMap, int numAnchors, double ddistList[], char anchorOrder[][NAME_LEN]);
+int move_particle(struct particle *particles);
+int update_map(struct anchor *anchorMap);
+int normalize_weight(struct particle *particles);
 double assign_weight(struct particle *particles, struct anchor *anchorMap, int numAnchors, struct meas *measurement);
 struct particle * low_variance_sampling(struct particle **particles, struct particle **newParticles);
-int highest_weight(struct particle particles[], struct particle bestParticle);
-int best_position(struct particle particles[], struct particle bestParticle);
-int particle_filter(struct particle **particles, struct anchor anchorMap[], int numAnchors, struct meas *measurement, struct particle **newParticles, struct particle bestParticle);
+int highest_weight(struct particle *particles, struct particle bestParticle);
+int best_position(struct particle *particles, struct particle bestParticle);
+int particle_filter(struct particle **particles, struct anchor *anchorMap, int numAnchors, struct meas *measurement, struct particle **newParticles, struct particle bestParticle);
 int init(struct particle **particles, struct minmax minmax);
 double multi_norm_pdf(double *x, double *mu, double *sigma, int numAnchorMeas);
-struct minmax get_min_max(struct anchor anchorMap[], int numAnchors);
+struct minmax get_min_max(struct anchor *anchorMap, int numAnchors);
 
 int main();
 

@@ -136,7 +136,7 @@ struct particle *
 low_variance_sampling(struct particle **particles, struct particle **newParticles)
 {
     double inM = 1/M;
-    double c = (*particles)->w;
+    double c = (*particles+0)->w;
     int i = 0;
     double U;
     double r = rand()/((double)RAND_MAX*M);
@@ -146,7 +146,8 @@ low_variance_sampling(struct particle **particles, struct particle **newParticle
         while (U > c)
         {
             i++;
-            c = c + (*particles+i)->w;
+            c += (*particles+i)->w;
+            //printf("resampling i: %d\n", i);
         }
         (*newParticles+m)->x = (*particles+i)->x;
         (*newParticles+m)->y = (*particles+i)->y;
@@ -357,19 +358,15 @@ int main(void)
     size_t len = 0;
 
     // Init particles
-    struct particle particles[M];
-    struct particle *particles_p = particles;
-    struct particle **particles_pp = &particles_p;
+    struct particle *particles = malloc(M*sizeof(struct particle));
+    struct particle **particles_pp = &particles;
     init(particles_pp, minmax);
-
-    //printf("pp particle %f\n", (*particles_pp)->x);
 
     // Particles for resampling, two sets of struct arrays are needed 
     // for the resampling where the old particles goes into the new 
     // list and then the pointer is set to the new one and vise vers.
-    struct particle newParticles[M];
-    struct particle *newParticles_ptr = newParticles;
-    struct particle **newParticles_pp = &newParticles_ptr;
+    struct particle *newParticles = malloc(M*sizeof(struct particle));
+    struct particle **newParticles_pp = &newParticles;
 
     // Moast likely position
     struct particle bestParticle;
@@ -379,6 +376,10 @@ int main(void)
     while (getline(&line, &len, fp) != -1)
     {
         //printf("line : %s\n", line);
+        
+        char buf[40];
+        snprintf(buf, 40, "../plot_data/particles_%d.dat", index);
+        write_file_particle(*particles_pp, buf);
 
         // Parse line into measurment struct
         int numAnchor = sub_in_str(line, "addr");
@@ -386,24 +387,25 @@ int main(void)
         parse_data(line,measurement,numAnchor);
 
         // PARTICLE FILTER GOES HERE
-        //printf("\n\n\n===============\n\n\n");
+        //printf("\n===============\n");
         //printf("Address before, particles_pp: %p\n", (*particles_pp));
         //printf("Address before, newParticles_pp: %p\n", (*newParticles_pp));
         particle_filter(particles_pp, anchorMap, numAnchors, measurement, newParticles_pp, bestParticle);
         //printf("Address after, particles_pp: %p\n", (*particles_pp));
         //printf("Address after, newParticles_pp: %p\n", (*newParticles_pp));
 
-        char buf[40];
-        snprintf(buf, 40, "../plot_data/particles_%d.dat", index);
-        write_file_particle(particles, buf);
+        printf("particle pp: %e\n", (*particles_pp)->w);
+
         index++;
     }
 
     //printf("\n\nMax line size: %zd\n", len);
 
     fclose(fp);
-    free(line); // getline will resize the input buffer as necessary
-                // the user needs to free the memory when not needed!
+    free(line);
+
+    free(particles);
+    free(newParticles);
 
     printf("Done\n");
     return 0;
