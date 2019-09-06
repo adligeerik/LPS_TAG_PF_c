@@ -19,7 +19,7 @@ calculate_ddist(struct particle particle, struct anchor anchorMap[], int numAnch
     double ddist =0;
 
     // Distance to ref anchor (master) 
-    double refAnchorDist = sqrt(pow(particle.x,2)+ pow(particle.y,2) + pow(particle.z,2));
+    double refAnchorDist = sqrt(pow(particle.x,2) + pow(particle.y,2) + pow(particle.z,2));
 
     // Calculate the ddist to all other anchors. ddist is the difference in lenght from the ref_anchor to another anchor.
     for (int i = 0; i < n; i++)
@@ -47,13 +47,13 @@ calculate_ddist(struct particle particle, struct anchor anchorMap[], int numAnch
 /**
  * Move particles
  */
-int move_particle(struct particle particles[])
+int move_particle(struct particle *particles)
 {
     for (int i = 0; i < M; i++)
     {
-        particles[i].x = particles[i].x + gauss(0,VAR_ACC)/5;
-        particles[i].y = particles[i].y + gauss(0,VAR_ACC)/5;
-        particles[i].z = particles[i].z + gauss(0,VAR_ACC)/5;
+        (particles+i)->x = (particles+i)->x + gauss(0,VAR_ACC)/5;
+        (particles+i)->y = (particles+i)->y + gauss(0,VAR_ACC)/5;
+        (particles+i)->z = (particles+i)->z + gauss(0,VAR_ACC)/5;
 
     }
     return 0;
@@ -70,18 +70,18 @@ int update_map(struct anchor anchorMap[])
 /**
  * Normalize weigth for each particle
  */
-int normalize_weight(struct particle particles[])
+int normalize_weight(struct particle *particles)
 {
     double weightSum = 0;
     // For each particle
     for (int i = 0; i < M; i++)
     {
-        weightSum = weightSum + particles[i].w;
+        weightSum = weightSum + (particles+i)->w;
     }
     //printf("sumw: %e\n",weightSum);
     for (int i = 0; i < M; i++)
     {
-        particles[i].w = particles[i].w/weightSum;
+        (particles+i)->w = (particles+i)->w/weightSum;
     }    
     return 0;
 }
@@ -110,12 +110,12 @@ assign_weight(struct particle *particles, struct anchor anchorMap[], int numAnch
 
     double pHigh = 0;
     double ddist[n];
-    double p;
+    double p = 0;
     for (int i = 0; i < M; i++)
     {
         memset(ddist,0,n*sizeof(ddist[0]));
         calculate_ddist(particles[i], anchorMap, n, ddist, anchorOrder);
-        //printf("ddist[0] : %f\n",ddist[0]);
+        //printf("ddist[0] : %e\n",ddist[0]);
         p = multi_norm_pdf(ddist, mean, cov, n);
         //printf("p %f\n",p);
         particles[i].w = p;
@@ -225,6 +225,8 @@ init(struct particle **particles, struct minmax minmax)
 double
 multi_norm_pdf(double *x, double *mu, double *sigma, int numAnchorMeas)
 {
+    //printf("ddist[0] : %e\n",x[0]);
+    //printf("==========\n");
     int n = numAnchorMeas;
 
     double xSubmy[n];
