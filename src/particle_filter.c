@@ -15,6 +15,7 @@
 struct ddist
 calculate_ddist(struct particle particle, struct anchor anchorMap[], int numAnchors,double ddistList[], char anchorOrder[][NAME_LEN])
 {
+    
     int n = numAnchors;
     double ddist =0;
 
@@ -24,24 +25,24 @@ calculate_ddist(struct particle particle, struct anchor anchorMap[], int numAnch
     // Calculate the ddist to all other anchors. ddist is the difference in lenght from the ref_anchor to another anchor.
     for (int i = 0; i < n; i++)
     {
-        for (int j = 0; j < n; j++)
+        for (int j = 0; j < 4; j++)
         {
             if ((strcmp(anchorOrder[j],anchorMap[i].anchorname)) == 0)
             {
-                if (anchorMap[i].ref_anchor == 1)
+                if (anchorMap[j].ref_anchor == 1)
                 {
                     ddistList[i] = 0;
                 }
                 else
                 {
-                    ddist = sqrt(pow(anchorMap[i].x-particle.x,2)+pow(anchorMap[i].y-particle.y,2)+pow(anchorMap[i].z-particle.z,2));
+                    ddist = sqrt(pow((anchorMap[j].x-particle.x),2)+pow((anchorMap[j].y-particle.y),2)+pow((anchorMap[j].z-particle.z),2));
                     ddistList[i] = ddist - refAnchorDist;
                     //printf("ddist %f\n", ddistList[i]);
                 }
             }
         }
     }
-    //printf("ddist %f\n", ddistList[0]);
+    //printf("ddist %e\n", ddistList[0]);
 }
 
 /**
@@ -51,9 +52,9 @@ int move_particle(struct particle *particles)
 {
     for (int i = 0; i < M; i++)
     {
-        (particles+i)->x = (particles+i)->x + gauss(0,VAR_ACC)/5;
-        (particles+i)->y = (particles+i)->y + gauss(0,VAR_ACC)/5;
-        (particles+i)->z = (particles+i)->z + gauss(0,VAR_ACC)/5;
+        (particles+i)->x = (particles+i)->x + gauss(0,VAR_ACC)/15;
+        (particles+i)->y = (particles+i)->y + gauss(0,VAR_ACC)/15;
+        (particles+i)->z = (particles+i)->z + gauss(0,VAR_ACC)/15;
 
     }
     return 0;
@@ -93,6 +94,7 @@ double
 assign_weight(struct particle *particles, struct anchor anchorMap[], int numAnchors, struct meas measurement[])
 {
     int n = numAnchors;
+    //printf("\n n %d\n",n);
     
     char anchorOrder[n][NAME_LEN]; 
     double mean[n];
@@ -106,7 +108,9 @@ assign_weight(struct particle *particles, struct anchor anchorMap[], int numAnch
         mean[i] = measurement[i].ddist;
 
         cov[i] = variance;
+        //printf("anchor name: %s   ;",measurement[i].anchorname);
     }
+    //printf("\n");
 
     double pHigh = 0;
     double ddist[n];
@@ -118,7 +122,7 @@ assign_weight(struct particle *particles, struct anchor anchorMap[], int numAnch
         //printf("ddist[0] : %e\n",ddist[0]);
         p = multi_norm_pdf(ddist, mean, cov, n);
         //printf("p %f\n",p);
-        particles[i].w = p;
+        (particles+i)->w = p;
         if (p > pHigh)
         {
             pHigh = p;
@@ -140,6 +144,7 @@ low_variance_sampling(struct particle **particles, struct particle **newParticle
     int i = 0;
     double U;
     double r = rand()/((double)RAND_MAX*M);
+    //printf("resampling r: %e\n", r);
     for (int m = 0; m < M; m++)
     {
         U = r + m*inM;
@@ -147,7 +152,8 @@ low_variance_sampling(struct particle **particles, struct particle **newParticle
         {
             i++;
             c += (*particles+i)->w;
-            //printf("resampling i: %d\n", i);
+            //printf("resampling i: %d    ", i);
+            //printf("resampling w: %e\n", (*particles+i)->w);
         }
         (*newParticles+m)->x = (*particles+i)->x;
         (*newParticles+m)->y = (*particles+i)->y;
@@ -179,9 +185,18 @@ highest_weight(struct particle particles[], struct particle bestParticle)
  * Calculates the most likely position of the tag given all the particles
  */
 int
-best_position(struct particle particles[], struct particle bestParticle)
+best_position(struct particle *particles, struct particle *bestParticle)
 {
+    (bestParticle)->x = 0;
+    (bestParticle)->y = 0;
+    (bestParticle)->z = 0;
 
+    for (int i = 0; i < M; i++)
+    {
+        (bestParticle)->x = (particles+i)->x;
+        (bestParticle)->y = (particles+i)->y;
+        (bestParticle)->z = (particles+i)->z;
+    }
     return 0;
 }
 
@@ -247,7 +262,7 @@ multi_norm_pdf(double *x, double *mu, double *sigma, int numAnchorMeas)
 /**
  * Particle particle_filter
  */
-int particle_filter(struct particle **particles, struct anchor *anchorMap, int numAnchors, struct meas *measurement, struct particle **newParticles, struct particle bestParticle)
+int particle_filter(struct particle **particles, struct anchor *anchorMap, int numAnchors, struct meas *measurement, struct particle **newParticles, struct particle *bestParticle)
 {
     // Calculate weight
     double pHigh =  assign_weight(*particles, anchorMap, numAnchors, measurement);
@@ -371,7 +386,7 @@ int main(void)
     struct particle **newParticles_pp = &newParticles;
 
     // Most likely position
-    struct particle bestParticle;
+    struct particle *bestParticle = malloc(sizeof(struct particle));
 
 
     int index = 0;
@@ -394,11 +409,14 @@ int main(void)
         //printf("\n===============\n");
         //printf("Address before, particles_pp: %p\n", (*particles_pp));
         //printf("Address before, newParticles_pp: %p\n", (*newParticles_pp));
-        particle_filter(particles_pp, anchorMap, numAnchors, measurement, newParticles_pp, bestParticle);
+        particle_filter(particles_pp, anchorMap, numAnchor, measurement, newParticles_pp, bestParticle);
         //printf("Address after, particles_pp: %p\n", (*particles_pp));
         //printf("Address after, newParticles_pp: %p\n", (*newParticles_pp));
 
         //printf("particle pp: %e\n", (*particles_pp)->w);
+        //printf("bestParticle: %e\n", (bestParticle)->x);
+
+        write_file_best_particle(bestParticle,"../plot_data/bestParticel.dat");
 
         index++;
     }
