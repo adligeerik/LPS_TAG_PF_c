@@ -316,7 +316,7 @@ get_min_max(struct anchor anchorMap[], int numAnchors)
         {
             minmax.ymax = anchorMap[i].y;
         }
-        else if (minmax.ymin > anchorMap[i].x)
+        else if (minmax.ymin > anchorMap[i].y)
         {
             minmax.ymin = anchorMap[i].y;
         }
@@ -325,7 +325,7 @@ get_min_max(struct anchor anchorMap[], int numAnchors)
         {
             minmax.zmax = anchorMap[i].z;
         }
-        else if (minmax.zmin > anchorMap[i].x)
+        else if (minmax.zmin > anchorMap[i].z)
         {
             minmax.zmin = anchorMap[i].z;
         }
